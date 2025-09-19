@@ -276,13 +276,13 @@ Return nil if the package is already installed and should not be upgraded."
                         (error "Failed to checkout `%s': `%s'"
                                name (error-message-string err))))))
         (cond
-          ((and quelpa--override-version-check
-                (quelpa-version=-p name version))
-           (setq version (concat version ".1"))
-           version)
-          ((or quelpa--override-version-check
-               (quelpa-version>-p name version))
-           version))))))
+         ((and quelpa--override-version-check
+               (quelpa-version=-p name version))
+          (setq version (concat version ".1"))
+          version)
+         ((or quelpa--override-version-check
+              (quelpa-version>-p name version))
+          version))))))
 
 (defun quelpa-build (rcp)
   "Build a package from the given recipe RCP.
@@ -409,7 +409,8 @@ and return TIME-STAMP, otherwise return OLD-TIME-STAMP."
                 hashes (mapcar
                         (lambda (file)
                           (secure-hash
-                           'sha1 (concat file (quelpa-slurp-file file)))) files)
+                           'sha1 (concat file (quelpa-slurp-file file))))
+                        files)
                 new-content-hash (secure-hash 'sha1 (mapconcat 'identity hashes "")))
         (setq new-content-hash (secure-hash 'sha1 (quelpa-slurp-file file-path)))))
 
