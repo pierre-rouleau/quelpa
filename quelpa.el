@@ -239,19 +239,19 @@ OP is taking two version list and comparing."
     (funcall op ver pkg-ver)))
 
 (defmacro quelpa-version>-p (name version)
-  "Return non-nil if VERSION of pkg with NAME is newer than what is currently installed."
+  "Non-nil if VERSION of NAME pkg is newer than what is currently installed."
   `(quelpa-version-cmp ,name ,version (lambda (o1 o2) (not (version-list-<= o1 o2)))))
 
 (defmacro quelpa-version<-p (name version)
-  "Return non-nil if VERSION of pkg with NAME is older than what is currently installed."
+  "Non-nil if VERSION of NAME pkg is older than what is currently installed."
   `(quelpa-version-cmp ,name ,version 'version-list-<))
 
 (defmacro quelpa-version=-p (name version)
-  "Return non-nil if VERSION of pkg with NAME is same which what is currently installed."
+  "Non-nil if VERSION of pkg with NAME is same as currently installed."
   `(quelpa-version-cmp ,name ,version 'version-list-=))
 
 (defun quelpa--package-installed-p (package &optional min-version)
-  "Return non-nil if PACKAGE, of MIN-VERSION or newer, is installed.
+  "Non-nil if PACKAGE, of MIN-VERSION or newer, is installed.
 Like `package-installed-p' but properly check for built-in package even when all
 packages are not initialized."
   (or (package-installed-p package (or min-version quelpa--min-ver))
@@ -518,9 +518,10 @@ Otherwise do nothing."
 ;;; Version Handling
 
 (defun quelpa-build--valid-version (str &optional regexp)
-  "Apply to STR the REGEXP if defined, \
-then pass the string to `version-to-list' and return the result, \
-or nil if the version cannot be parsed."
+  "Convert version string in STR into a list of numbers.
+If a REGEXP is specified, first extract the sub-string matching and convert
+the match.
+Return the result, or nil if the version cannot be parsed."
   (when (and regexp (string-match regexp str))
     (setq str (match-string 1 str)))
   (ignore-errors (version-to-list str)))
@@ -694,7 +695,7 @@ This is used to avoid exceeding the rate limit of 1 request per 2
 seconds; the server cuts off after 10 requests in 20 seconds.")
 
 (defvar quelpa-build--wiki-min-request-interval 3
-  "The shortest permissible interval between successive requests for Emacswiki URLs.")
+  "Shortest permissible interval between successive requests for Emacswiki URLs.")
 
 (defmacro quelpa-build--with-wiki-rate-limit (&rest body)
   "Rate-limit BODY code passed to this macro to match EmacsWiki's rate limiting."
@@ -1518,7 +1519,7 @@ FILES is a list of (SOURCE . DEST) relative filepath pairs."
                (expand-file-name dest-file target-dir))))
 
 (defun quelpa-build--copy-file (file newname)
-  "Copy FILE to NEWNAME and create parent directories for NEWNAME if they don't exist."
+  "Copy FILE to NEWNAME, create parent directories for NEWNAME if they are missing."
   (let ((newdir (file-name-directory newname)))
     (unless (file-exists-p newdir)
       (make-directory newdir t)))
@@ -2038,7 +2039,9 @@ given package and remove any old versions of it even if the
 
 ;;;###autoload
 (defun quelpa-upgrade-all-maybe (&optional force)
-  "Run `quelpa-upgrade-all' if at least `quelpa-upgrade-interval' days have passed since the last run.
+  "Run `quelpa-upgrade-all' if it is aging or FORCE.
+It is considered aged when least `quelpa-upgrade-interval' days have passed
+since the last run.
 With prefix FORCE, packages will all be upgraded discarding local changes."
   (interactive "P")
   (when quelpa-upgrade-interval
