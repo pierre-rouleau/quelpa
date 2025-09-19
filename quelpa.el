@@ -258,6 +258,9 @@ packages are not initialized."
       (package-built-in-p package (or min-version quelpa--min-ver))))
 
 (defvar quelpa--override-version-check nil)
+(defvar quelpa-build-stable nil
+  "When non-nil, then try to build packages from versions-tagged code.")
+
 (defun quelpa-checkout (rcp dir)
   "Return the version of the new package given a RCP and DIR.
 Return nil if the package is already installed and should not be upgraded."
@@ -326,7 +329,7 @@ already and should not be upgraded etc)."
       time-stamp
     (cl-letf* ((package-strip-rcs-id-orig (symbol-function 'package-strip-rcs-id))
                ((symbol-function 'package-strip-rcs-id)
-                (lambda (str)
+                (lambda (_str)
                   (or (funcall package-strip-rcs-id-orig (lm-header "package-version"))
                       (funcall package-strip-rcs-id-orig (lm-header "version"))
                       "0"))))
@@ -429,8 +432,7 @@ and return TIME-STAMP, otherwise return OLD-TIME-STAMP."
   "When non-nil, then print additional progress information."
   :type 'boolean)
 
-(defvar quelpa-build-stable nil
-  "When non-nil, then try to build packages from versions-tagged code.")
+
 
 (defcustom quelpa-build-timeout-executable
   (let ((prog (or (executable-find "timeout")
@@ -887,8 +889,8 @@ Return a cons cell whose `car' is the root and whose `cdr' is the repository."
     (with-current-buffer (get-buffer-create "*quelpa-build-checkout*")
       (let ((root (quelpa-build--trim (plist-get config :url) ?/))
             (repo (or (plist-get config :module) (symbol-name name)))
-            (bound (goto-char (point-max)))
             latest)
+        (goto-char (point-max))
         (cond
          ((and (file-exists-p (expand-file-name "CVS" dir))
                (equal (quelpa-build--cvs-repo dir) (cons root repo)))
