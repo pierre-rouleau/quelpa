@@ -6,7 +6,7 @@
 ;; Author: steckerhalter
 ;; URL: https://github.com/quelpa/quelpa
 ;; Version: 1.0
-;; Package-Requires: ((emacs "25.1"))
+;; Package-Requires: ((emacs "26.1"))
 ;; Keywords: tools package management build source elpa
 
 ;; This file is not part of GNU Emacs.
@@ -36,7 +36,7 @@
 
 ;;; Requirements:
 
-;; Emacs 25.1
+;; Emacs 26.1
 
 ;;; Code:
 
